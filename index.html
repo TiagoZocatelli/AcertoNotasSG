@@ -37,15 +37,15 @@
         <input type="date" id="data">
         <div id="camposCupomNormal">
             <label for="valor">Valor:</label>
-            <input type="text" id="valor" placeholder="Digite o valor">
+            <input type="number" id="valor" placeholder="Digite o valor" inputmode="numeric">
             <label for="chaveCupom">Chave do Cupom (44 dígitos):</label>
-            <input type="text" id="chaveCupom" placeholder="Digite a chave do cupom">
+            <input type="number" id="chaveCupom" placeholder="Digite a chave do cupom" inputmode="numeric">
         </div>
         <div id="camposCombustivelConvenio" style="display: none;">
             <label for="valorCombustivel">Valor do Combustível (Convênio):</label>
-            <input type="text" id="valorCombustivel" placeholder="Digite o valor do combustível">
+            <input type="number" id="valorCombustivel" placeholder="Digite o valor do combustível" inputmode="numeric">
             <label for="chaveCupomCombustivel">Chave do Cupom do Combustível (44 dígitos):</label>
-            <input type="text" id="chaveCupomCombustivel" placeholder="Digite a chave do cupom do combustível">
+            <input type="number" id="chaveCupomCombustivel" placeholder="Digite a chave do cupom do combustível" inputmode="numeric">
         </div>
         <button onclick="limparCupons()">Limpar Cupons</button>
         <button onclick="adicionarCupom()">Adicionar Cupom</button>
