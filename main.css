@@ -1,0 +1,107 @@
+/* main.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f5f9; /* Azul claro */
+}
+
+#container {
+    max-width: 100%; /* Alterado para ocupar a largura total da tela */
+    margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f4f4f4;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#saldo-atual-container {
+    margin-bottom: 20px;
+    margin-top: 16px;
+}
+
+
+#saldo-atual {
+    font-weight: bold;
+    font-size: 18px; /* Tamanho da fonte do saldo atual */
+    color: #007bff; /* Cor azul */
+}
+
+input[type="text"],
+input[type="number"], /* Adicionado o tipo number */
+input[type="date"],
+select,
+textarea { /* Incluído o textarea */
+    width: 100%; /* Alterado para ocupar a largura total da tela */
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%; /* Alterado para ocupar a largura total da tela */
+    background-color: #007bff; /* Azul */
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+#listaCupons {
+    margin-top: 20px;
+    padding: 0;
+}
+
+#listaCupons li {
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+#relatorio-container {
+    max-width: 100%; /* Alterado para ocupar a largura total da tela */
+    margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+}
+
+h2 {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+p {
+    margin-bottom: 10px;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+strong {
+    font-weight: bold;
+}
+
+#valor-inicial {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
