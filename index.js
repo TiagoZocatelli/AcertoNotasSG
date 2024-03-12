@@ -4,6 +4,20 @@ let valorTotal = 0;
 let valorCombustivelTotal = 0;
 let saldoAtual = 0;
 let valorInicial = 0;
+let cuponsVisiveis = false;
+let fotosCupons = [];
+
+function alternarVisibilidadeCupons() {
+    cuponsVisiveis = !cuponsVisiveis; // Inverte o valor da variável
+    const listaCupons = document.getElementById('listaCupons');
+    if (cuponsVisiveis) {
+        listaCupons.style.display = 'block'; // Exibe a lista de cupons
+        document.querySelector('button[onclick="alternarVisibilidadeCupons()"]').textContent = 'Esconder Cupons'; // Altera o texto do botão
+    } else {
+        listaCupons.style.display = 'none'; // Oculta a lista de cupons
+        document.querySelector('button[onclick="alternarVisibilidadeCupons()"]').textContent = 'Visualizar Cupons'; // Altera o texto do botão
+    }
+}
 
 function limparSaldo() {
     saldoAtual = 0;
@@ -11,8 +25,17 @@ function limparSaldo() {
     atualizarSaldo(); // Atualize o saldo exibido para refletir a mudança
 }
 
+
 function adicionarSaldo() {
     console.log('Botão "Adicionar Saldo" clicado!');
+    let validarSaldo = document.getElementById('validar-saldo').checked;
+
+    // Verificar se a opção validarSaldo está ativada
+    if (!validarSaldo) {
+        alert('A opção para validar o saldo deve estar ativada para adicionar saldo.');
+        return;
+    }
+
     let valorAdicional = parseFloat(document.getElementById('saldo-inicial').value.replace(',', '.')) || 0;
     saldoAtual += valorAdicional;
     valorInicial += valorAdicional;
@@ -21,6 +44,8 @@ function adicionarSaldo() {
     atualizarSaldo(); // Atualizar o saldo na tela após adicionar o saldo
     document.getElementById('saldo-inicial').value = ''; // Limpar o campo após adicionar o saldo
 }
+
+
 
 function removerCupom(index) {
     // Remove o cupom da lista de cupons
@@ -47,16 +72,15 @@ function adicionarCupom() {
     let data = document.getElementById('data').value;
     let tipoCupom = document.getElementById('tipoCupom').value;
 
-    // Verifica se os campos obrigatórios estão preenchidos
     if (!nomeFuncionario || !data) {
         alert('Por favor, preencha todos os campos obrigatórios (Nome do Funcionário e Data).');
         return;
     }
 
-    let tipoEmissao = ''; // Inicializa o tipo de emissão como vazio
+    let tipoEmissao = '';
 
     if (tipoCupom === 'normal') {
-        tipoEmissao = document.getElementById('tipoEmissao').value; // Captura o tipo de emissão apenas para cupons normais
+        tipoEmissao = document.getElementById('tipoEmissao').value;
     }
 
     let valor = 0;
@@ -66,44 +90,54 @@ function adicionarCupom() {
 
     if (tipoCupom === 'normal') {
         valor = parseFloat(document.getElementById('valor').value.replace(',', '.')) || 0;
-        chaveCupom = document.getElementById('chaveCupom').value;
     } else if (tipoCupom === 'combustivel') {
         valorCombustivel = parseFloat(document.getElementById('valorCombustivel').value.replace(',', '.')) || 0;
-        chaveCupomCombustivel = document.getElementById('chaveCupomCombustivel').value;
     }
 
-    // Verifica se o valor do cupom é maior do que o saldo atual
-    if (valor > saldoAtual || valorCombustivel > saldoAtual) {
-        alert('O valor do cupom não pode ser maior do que o saldo atual.');
+    // Verifica se pelo menos um dos valores inseridos é diferente de zero
+    if (valor === 0 && valorCombustivel === 0) {
+        alert('O valor do cupom ou o valor do combustível não pode ser zero.');
         return;
     }
 
-    // Adiciona o cupom à lista de cupons com o tipo de emissão (apenas se for um cupom normal)
-    cupons.push({ nomeFuncionario, data, tipoCupom, tipoEmissao, valor, chaveCupom, valorCombustivel, chaveCupomCombustivel });
+    // Verifica se o valor do cupom é maior do que o saldo atual, se a opção validarSaldo for verdadeira
+    let validarSaldo = document.getElementById('validar-saldo').checked;
 
-    // Atualiza o valor total
-    valorTotal += valor;
+    let novoSaldo = saldoAtual; // Variável para armazenar o novo saldo após a adição do cupom
 
-    // Atualiza o valor total do combustível
-    valorCombustivelTotal += valorCombustivel;
-
-    // Verifica se o cupom é do tipo combustível para não atualizar o saldo
-    if (tipoCupom !== 'combustivel') {
-        // Atualiza o saldo atual
-        saldoAtual = valorInicial - (valorTotal + valorCombustivelTotal);
+    if (validarSaldo) {
+        novoSaldo -= valor; // Deduz o valor do cupom do novo saldo
+        novoSaldo -= valorCombustivel; // Deduz o valor do combustível do novo saldo
+        if (novoSaldo < 0) {
+            alert('O valor do cupom não pode ser maior do que o saldo atual.');
+            return;
+        }
     }
 
-    // Limpa os campos de entrada
-    document.getElementById('valor').value = '';
-    document.getElementById('chaveCupom').value = '';
-    document.getElementById('valorCombustivel').value = '';
-    document.getElementById('chaveCupomCombustivel').value = '';
+    cupons.push({ nomeFuncionario, data, tipoCupom, tipoEmissao, valor, valorCombustivel, });
 
-    // Atualiza a lista de cupons exibida
+    valorTotal += valor;
+    valorCombustivelTotal += valorCombustivel;
+
+    if (tipoCupom !== 'combustivel') {
+        saldoAtual = novoSaldo; // Atualiza o saldo apenas se o cupom não for de combustível
+    }
+
+    document.getElementById('valor').value = '';
+    document.getElementById('valorCombustivel').value = '';
+
     atualizarListaCupons();
-    // Atualiza o saldo exibido
     atualizarSaldo();
+
+    const inputElement = document.getElementById("fotoCupom");
+    const files = inputElement.files;
+    for (let i = 0; i < files.length; i++) {
+        fotosCupons.push(files[i]);
+    }
+    inputElement.value = null;    
+    // Limpa o campo de arquivo para permitir a seleção do mesmo arquivo novamente
 }
+
 
 
 function atualizarListaCupons() {
@@ -115,9 +149,7 @@ function atualizarListaCupons() {
         li.innerHTML = `
             <div><strong>Data:</strong> ${cupom.data}</div>
             <div><strong>Valor:</strong> R$ ${cupom.valor.toFixed(2)}</div>
-            ${cupom.chaveCupom ? `<div><strong>Chave do Cupom:</strong> ${cupom.chaveCupom}</div>` : ''}
             ${cupom.valorCombustivel ? `<div><strong>Valor do Combustível:</strong> R$ ${cupom.valorCombustivel.toFixed(2)}</div>` : ''}
-            ${cupom.chaveCupomCombustivel ? `<div><strong>Chave do Cupom do Combustível:</strong> ${cupom.chaveCupomCombustivel}</div>` : ''}
             <button onclick="removerCupom(${cupons.indexOf(cupom)})">Remover</button>
         `;
         listaCupons.appendChild(li);
@@ -155,6 +187,15 @@ function gerarRelatorio(tipo) {
     funcionario.textContent = `Funcionário: ${funcionarioLogado}`;
     relatorioContainer.appendChild(funcionario);
 
+    if (document.getElementById('validar-saldo').checked) {
+        // Calcular saldo inicial (antes de aplicar descontos dos cupons)
+        const saldoInicial = valorInicial.toFixed(2);
+
+        const saldoInicialElement = document.createElement('p');
+        saldoInicialElement.textContent = `Saldo Inicial: R$ ${saldoInicial}`;
+        relatorioContainer.appendChild(saldoInicialElement);
+    }
+
     if (tipo === 'detalhado') {
         const listaCupons = document.createElement('ul');
         cupons.forEach(cupom => {
@@ -162,10 +203,7 @@ function gerarRelatorio(tipo) {
             cupomItem.innerHTML = `
                 <div><strong>Data:</strong> ${cupom.data}</div>
                 <div><strong>Valor:</strong> R$ ${cupom.valor.toFixed(2)}</div>
-                ${cupom.tipoCupom === 'normal' ? `<div><strong>Tipo de Emissão:</strong> ${cupom.tipoEmissao.toUpperCase()}</div>` : ''}
-                ${cupom.chaveCupom ? `<div><strong>Chave do Cupom:</strong> ${cupom.chaveCupom}</div>` : ''}
                 ${cupom.valorCombustivel ? `<div><strong>Valor do Combustível:</strong> R$ ${cupom.valorCombustivel.toFixed(2)}</div>` : ''}
-                ${cupom.chaveCupomCombustivel ? `<div><strong>Chave do Cupom do Combustível:</strong> ${cupom.chaveCupomCombustivel}</div>` : ''}
             `;
             listaCupons.appendChild(cupomItem);
             listaCupons.appendChild(document.createElement('br')); // Adiciona um espaço entre os cupons
@@ -174,36 +212,39 @@ function gerarRelatorio(tipo) {
     }
 
     const totalCupons = document.createElement('p');
-    const totalCuponsValor = cupons.reduce((total, cupom) => total + cupom.valor, 0);
+    const totalCuponsValor = cupons.reduce((total, cupom) => total + cupom.valor + (cupom.valorCombustivel ? cupom.valorCombustivel : 0), 0);
     totalCupons.textContent = `Total dos Cupons: R$ ${totalCuponsValor.toFixed(2)}`;
     relatorioContainer.appendChild(totalCupons);
 
     if (tipo === 'detalhado') {
         const totalCombustivel = document.createElement('p');
-        const totalCombustivelValor = cupons.reduce((total, cupom) => total + cupom.valorCombustivel, 0);
+        const totalCombustivelValor = cupons.reduce((total, cupom) => cupom.valorCombustivel ? total + cupom.valorCombustivel : total, 0);
         totalCombustivel.textContent = `Total de Combustível: R$ ${totalCombustivelValor.toFixed(2)}`;
         relatorioContainer.appendChild(totalCombustivel);
     } else if (tipo === 'resumido') {
         const totalCombustivel = document.createElement('p');
-        const totalCombustivelValor = cupons.reduce((total, cupom) => total + cupom.valorCombustivel, 0);
+        const totalCombustivelValor = cupons.reduce((total, cupom) => cupom.valorCombustivel ? total + cupom.valorCombustivel : total, 0);
         totalCombustivel.textContent = `Total de Combustível (Convênio): R$ ${totalCombustivelValor.toFixed(2)}`;
         relatorioContainer.appendChild(totalCombustivel);
     }
 
-    // Exibe o saldo atual no relatório
-    const saldoAtualElement = document.createElement('p');
-    saldoAtualElement.textContent = `Saldo Atual: R$ ${saldoAtual.toFixed(2)}`;
-    relatorioContainer.appendChild(saldoAtualElement);
+    if (document.getElementById('validar-saldo').checked) {
+        // Calcular saldo final (após aplicar descontos dos cupons)
+        const saldoFinal = saldoAtual.toFixed(2);
+
+        const saldoFinalElement = document.createElement('p');
+        saldoFinalElement.textContent = `Saldo Final: R$ ${saldoFinal}`;
+        relatorioContainer.appendChild(saldoFinalElement);
+    }
 
     const imprimirBotao = document.createElement('button');
     imprimirBotao.textContent = 'Imprimir Relatório';
-    imprimirBotao.classList.add('imprimir-botao');
-    imprimirBotao.onclick = function() {
+    imprimirBotao.className = 'imprimir-botao';
+    imprimirBotao.onclick = function () {
         const relatorioWindow = window.open('', '_blank');
         relatorioWindow.document.write('<html><head><title>Relatório de Cupons</title>');
         relatorioWindow.document.write('<style>');
-        relatorioWindow.document.write('body { font-family: Arial, sans-serif; background-color: #f7f7f7; }');
-        relatorioWindow.document.write('.relatorio-container { max-width: 800px; margin: 20px auto; padding: 20px; border: 1px solid #ccc; border-radius: 10px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }');
+        relatorioWindow.document.write('.relatorio-container { max-width: 800px; margin: 0 auto; padding: 20px; border: 1px solid #000; border-radius: 10px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }');
         relatorioWindow.document.write('h2 { text-align: center; color: #333; }');
         relatorioWindow.document.write('p { margin: 10px 0; }');
         relatorioWindow.document.write('ul { list-style-type: none; padding-left: 0; }');
@@ -225,6 +266,7 @@ function mostrarCampos() {
     let tipoCupom = document.getElementById('tipoCupom').value;
     let camposCupomNormal = document.getElementById('camposCupomNormal');
     let camposCombustivelConvenio = document.getElementById('camposCombustivelConvenio');
+    let camposSaldo = document.getElementById('camposSaldo');
 
     if (tipoCupom === 'normal') {
         camposCupomNormal.style.display = 'block';
@@ -232,6 +274,19 @@ function mostrarCampos() {
     } else if (tipoCupom === 'combustivel') {
         camposCupomNormal.style.display = 'none';
         camposCombustivelConvenio.style.display = 'block';
+    }
+
+    // Exibir campos de saldo apenas se a opção validarSaldo estiver ativada
+    let validarSaldo = document.getElementById('validar-saldo').checked;
+    camposSaldo.style.display = validarSaldo ? 'block' : 'none';
+
+    if (!validarSaldo) {
+        camposSaldo.style.display = 'none';
+        document.getElementById('saldo-atual-container').style.display = 'none'; // Oculta o elemento saldo-atual-container
+        limparSaldo();
+    } else {
+        camposSaldo.style.display = 'block';
+        document.getElementById('saldo-atual-container').style.display = 'block'; // Exibe o elemento saldo-atual-container
     }
 }
 
@@ -244,7 +299,7 @@ function prepararExportacaoPDF() {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Verifica se há um parâmetro 'action' na URL
     const urlParams = new URLSearchParams(window.location.search);
     const action = urlParams.get('action');
@@ -271,4 +326,47 @@ function limparCupons() {
     valorCombustivelTotal = 0;
     atualizarListaCupons(); // Limpa a lista de cupons exibida
     atualizarSaldo(); // Atualiza o saldo exibido
+}
+
+
+
+function baixarFotosCupons() {
+    if (fotosCupons.length === 0) {
+        alert("Nenhuma foto de cupom para baixar.");
+        return;
+    }
+
+    const zip = new JSZip();
+    const folder = zip.folder("cupons");
+
+    fotosCupons.forEach((foto, index) => {
+        const fileName = `cupom_${index + 1}.${foto.name.split('.').pop()}`;
+        folder.file(fileName, foto);
+    });
+
+    zip.generateAsync({ type: "blob" })
+        .then(content => {
+            // Cria um objeto URL para o conteúdo do arquivo ZIP
+            const zipUrl = window.URL.createObjectURL(content);
+
+            // Cria um link para fazer o download do arquivo ZIP
+            const link = document.createElement("a");
+            link.href = zipUrl;
+            link.download = "cupons.zip";
+
+            // Adiciona o link ao corpo do documento
+            document.body.appendChild(link);
+
+            // Simula um clique no link para iniciar o download
+            link.click();
+
+            // Remove o link do corpo do documento após o download
+            document.body.removeChild(link);
+
+            // Revoga o objeto URL para liberar a memória
+            window.URL.revokeObjectURL(zipUrl);
+        })
+        .catch(error => {
+            console.error("Erro ao gerar arquivo zip:", error);
+        });
 }

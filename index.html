@@ -7,14 +7,24 @@
 <link rel="stylesheet" href="main.css">
 <link rel="stylesheet" href="estilos.css">
 <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsqr.min.js"></script> <!-- Adicionando a biblioteca jsQR -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+
 </head>
 <body>
     <div id="container">
         <h2>Registro de Cupons</h2>
-        <input type="number" id="saldo-inicial" placeholder="Digite o saldo inicial" inputmode="numeric">
-        <button onclick="adicionarSaldo()">Adicionar Saldo</button> <!-- Corrigido aqui -->
-        <button onclick="limparSaldo()">Limpar Saldo</button>
-        <div id="saldo-atual-container">
+        <div class="checkbox-container">
+            <input type="checkbox" id="validar-saldo" onchange="mostrarCampos()">
+            <label for="validar-saldo">Validar saldo da conta ao adicionar cupom</label>
+        </div>        
+        <div id="camposSaldo" style="display: none;">
+            <input type="text" id="saldo-inicial" placeholder="Digite o saldo inicial">
+            <button onclick="adicionarSaldo()">Adicionar Saldo</button> <!-- Corrigido aqui -->
+            <button onclick="limparSaldo()">Limpar Saldo</button>
+        </div>
+        <div id="saldo-atual-container" style="display: none;">
             Saldo Atual: <span id="saldo-atual">0.00</span>
         </div>            
         <div id="tipoCupomContainer">
@@ -37,23 +47,24 @@
         <input type="date" id="data">
         <div id="camposCupomNormal">
             <label for="valor">Valor:</label>
-            <input type="number" id="valor" placeholder="Digite o valor" inputmode="numeric">
-            <label for="chaveCupom">Chave do Cupom (44 dígitos):</label>
-            <input type="number" id="chaveCupom" placeholder="Digite a chave do cupom" inputmode="numeric">
+            <input type="text" id="valor" placeholder="Digite o valor">
         </div>
         <div id="camposCombustivelConvenio" style="display: none;">
             <label for="valorCombustivel">Valor do Combustível (Convênio):</label>
-            <input type="number" id="valorCombustivel" placeholder="Digite o valor do combustível" inputmode="numeric">
-            <label for="chaveCupomCombustivel">Chave do Cupom do Combustível (44 dígitos):</label>
-            <input type="number" id="chaveCupomCombustivel" placeholder="Digite a chave do cupom do combustível" inputmode="numeric">
+            <input type="text" id="valorCombustivel" placeholder="Digite o valor do combustível">
         </div>
-        <button onclick="limparCupons()">Limpar Cupons</button>
+        
+        <label for="fotoCupom" class="file-upload-btn">Selecionar Imagens</label>
+        <input type="file" id="fotoCupom" accept="image/*" multiple style="display: none;">
         <button onclick="adicionarCupom()">Adicionar Cupom</button>
+        <button onclick="limparCupons()">Limpar Cupons</button>
         
         <hr>
         <h3>Cupons Registrados:</h3>
-        <ul id="listaCupons"></ul>
+        <button onclick="alternarVisibilidadeCupons()">Visualizar Cupons</button>
+        <ul id="listaCupons" style="display: none;"></ul>
         <div id="relatorio-container"></div>
+        <button onclick="baixarFotosCupons()">Baixar Fotos dos Cupons</button>
         <button onclick="gerarRelatorio('detalhado')">Gerar Relatório Detalhado</button>
         <button onclick="gerarRelatorio('resumido')">Gerar Relatório Resumido</button>
         <button onclick="limparRelatorio()">Limpar Relatório</button>
