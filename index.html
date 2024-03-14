@@ -6,11 +6,10 @@
 <title>Registro de Cupons</title>
 <link rel="stylesheet" href="main.css">
 <link rel="stylesheet" href="estilos.css">
-<script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsqr.min.js"></script> <!-- Adicionando a biblioteca jsQR -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsqr.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Roboto:ital@0;1&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
-
 </head>
 <body>
     <div id="container">
@@ -21,7 +20,7 @@
         </div>        
         <div id="camposSaldo" style="display: none;">
             <input type="text" id="saldo-inicial" placeholder="Digite o saldo inicial">
-            <button onclick="adicionarSaldo()">Adicionar Saldo</button> <!-- Corrigido aqui -->
+            <button onclick="adicionarSaldo()">Adicionar Saldo</button>
             <button onclick="limparSaldo()">Limpar Saldo</button>
         </div>
         <div id="saldo-atual-container" style="display: none;">
@@ -63,7 +62,12 @@
         <h3>Cupons Registrados:</h3>
         <button onclick="alternarVisibilidadeCupons()">Visualizar Cupons</button>
         <ul id="listaCupons" style="display: none;"></ul>
+        <div id="visualizacaoImagem" class="modal">
+            <span class="fechar" onclick="fecharVisualizacaoImagem()">&times;</span>
+            <img id="imagemCupom" class="imagem-cupom">
+        </div>        
         <div id="relatorio-container"></div>
+        <button id="visualizarImg" onclick="visualizarImagensCupons()">Visualizar Imagens</button> <!-- Botão para visualizar imagens -->
         <button onclick="baixarFotosCupons()">Baixar Fotos dos Cupons</button>
         <button onclick="gerarRelatorio('detalhado')">Gerar Relatório Detalhado</button>
         <button onclick="gerarRelatorio('resumido')">Gerar Relatório Resumido</button>

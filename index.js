@@ -7,6 +7,7 @@ let valorInicial = 0;
 let cuponsVisiveis = false;
 let fotosCupons = [];
 
+
 function alternarVisibilidadeCupons() {
     cuponsVisiveis = !cuponsVisiveis; // Inverte o valor da variável
     const listaCupons = document.getElementById('listaCupons');
@@ -369,4 +370,129 @@ function baixarFotosCupons() {
         .catch(error => {
             console.error("Erro ao gerar arquivo zip:", error);
         });
+}
+
+function visualizarImagensCupons() {
+    const modal = document.getElementById('visualizacaoImagem');
+    const listaCupons = document.getElementById('listaCupons');
+    const button = document.getElementById('visualizarImg'); // Obter o botão
+
+    // Limpa o conteúdo do modal
+    modal.innerHTML = '';
+
+    // Verifica se há imagens na variável fotosCupons
+    if (fotosCupons.length === 0) {
+        alert("Nenhuma foto de cupom para visualizar.");
+        return;
+        button.textContent = 'Visualizar Imagens';
+    }
+
+    // Para cada imagem na variável fotosCupons, cria um elemento <div> para exibir o índice e o nome do cupom
+    fotosCupons.forEach((foto, index) => {
+        // Cria um contêiner para o índice e o nome do cupom
+        const container = document.createElement('div');
+        container.classList.add('cupom-container'); // Adiciona uma classe para estilização opcional
+
+        // Obtém o valor do cupom correspondente ao índice
+        const valorCupom = cupons[index].valor.toFixed(2);
+
+        // Cria um elemento <p> para exibir o nome do cupom com o valor
+        const cupomInfo = document.createElement('p');
+        cupomInfo.textContent = `Cupom - R$ ${valorCupom}`; // Define o texto do índice e nome do cupom
+        cupomInfo.className = 'cupom-info'; // Adiciona uma classe para estilização opcional
+        container.appendChild(cupomInfo); // Adiciona o índice e o nome do cupom ao contêiner
+
+        // Cria um botão para baixar e visualizar a imagem do cupom
+        const botaoDownload = document.createElement('button');
+        botaoDownload.textContent = 'Baixar/Visualizar'; // Texto do botão
+        botaoDownload.className = 'botao-download'; // Classe para estilização opcional
+        // Adiciona um evento de clique ao botão
+        botaoDownload.onclick = function() {
+            baixarVisualizarImagem(index);
+        };
+        container.appendChild(botaoDownload); // Adiciona o botão ao contêiner
+
+        // Cria um botão para remover a imagem do cupom
+        const botaoRemover = document.createElement('button');
+        botaoRemover.textContent = 'Remover'; // Texto do botão
+        botaoRemover.className = 'botao-remover'; // Classe para estilização opcional
+        // Adiciona um evento de clique ao botão
+        botaoRemover.onclick = function() {
+            removerImagemCupom(index);
+            button.textContent = 'Visualizar Imagens'; // Altera o texto do botão após a remoção
+        };
+        container.appendChild(botaoRemover);
+         // Adiciona o botão ao contêiner
+
+        // Adiciona o contêiner ao modal
+        modal.appendChild(container);
+    });
+
+    // Exibe o modal
+    modal.style.display = 'block';
+    button.textContent = 'Esconder Imagens';
+
+    // Adiciona um evento de clique ao botão para alternar o texto e ocultar/exibir o modal
+    button.addEventListener('click', function() {
+        // Verifica se há imagens para visualizar
+        if (modal.style.display === 'block') {
+            modal.style.display = 'none';
+            button.textContent = 'Visualizar Imagens';
+        } else {
+            modal.style.display = 'block';
+            button.textContent = 'Esconder Imagens';
+        }
+    });
+}
+
+
+
+function baixarVisualizarImagem(index) {
+    const fotoCupom = fotosCupons[index]; // Obtém a imagem correspondente ao índice
+
+    // Verifica se há uma imagem para o índice especificado
+    if (!fotoCupom) {
+        alert(`Não há imagem para o Cupom ${index + 1}.`);
+        return;
+    }
+
+    // Código para baixar ou visualizar a imagem
+    // Aqui você pode implementar a lógica para baixar a imagem ou abri-la em uma nova janela
+    // Por exemplo, você pode usar o método window.open() para abrir a imagem em uma nova guia
+
+    // Exemplo de abertura da imagem em uma nova guia
+    const urlImagem = URL.createObjectURL(fotoCupom);
+    window.open(urlImagem);
+}
+
+function removerImagemCupom(index) {
+    // Remove a imagem correspondente ao índice da variável fotosCupons
+    fotosCupons.splice(index, 1);
+
+    // Atualiza a interface do usuário removendo o contêiner correspondente ao cupom removido
+    const modal = document.getElementById('visualizacaoImagem');
+    modal.removeChild(modal.childNodes[index]);
+
+    // Reindexa os elementos após a remoção
+    for (let i = index; i < modal.childNodes.length; i++) {
+        // Atualiza o índice dos botões para corresponder à nova posição do cupom na lista
+        modal.childNodes[i].childNodes[1].onclick = function() {
+            baixarVisualizarImagem(i);
+        };
+        modal.childNodes[i].childNodes[2].onclick = function() {
+            removerImagemCupom(i);
+        };
+    }
+}
+
+function alternarTextoBotao() {
+    const botao = document.querySelector('button#botaoVisualizarImagens');
+    const relatorioContainer = document.getElementById('relatorio-container');
+    if (imagensCuponsVisiveis) {
+        botao.textContent = 'Esconder Imagens'; // Altera o texto do botão para "Esconder Imagens"
+        relatorioContainer.style.display = 'block'; // Exibe o relatório de cupom
+    } else {
+        botao.textContent = 'Visualizar Imagens'; // Altera o texto do botão para "Visualizar Imagens"
+        relatorioContainer.style.display = 'none'; // Oculta o relatório de cupom
+    }
 }

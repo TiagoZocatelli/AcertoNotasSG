@@ -186,3 +186,9 @@ strong {
     background-color: #e6e6e6;
     border-color: #adadad;
 }
+
+.botao-download, .botao-remover {
+    background-color: #333;
+    font-size: 14px; /* Tamanho de fonte menor */
+    padding: 8px; /* Menor preenchimento */
+}
