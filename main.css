@@ -41,6 +41,7 @@ textarea { /* Incluído o textarea */
     border: 1px solid #ccc;
     border-radius: 5px;
     box-sizing: border-box;
+    border-radius: 10px;
 }
 
 button {
@@ -191,4 +192,18 @@ strong {
     background-color: #333;
     font-size: 14px; /* Tamanho de fonte menor */
     padding: 8px; /* Menor preenchimento */
+}
+
+/* Estilos para o rodapé */
+footer {
+    background-color: #222; /* Alterando a cor de fundo */
+    color: #ccc; /* Alterando a cor do texto */
+    padding: 15px; /* Reduzindo o espaçamento interno */
+    text-align: center;
+}
+
+footer p {
+    margin: 5px 0;
+    font-size: 14px;
+    line-height: 1.5;
 }

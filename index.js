@@ -374,7 +374,6 @@ function baixarFotosCupons() {
 
 function visualizarImagensCupons() {
     const modal = document.getElementById('visualizacaoImagem');
-    const listaCupons = document.getElementById('listaCupons');
     const button = document.getElementById('visualizarImg'); // Obter o botão
 
     // Limpa o conteúdo do modal
@@ -384,49 +383,60 @@ function visualizarImagensCupons() {
     if (fotosCupons.length === 0) {
         alert("Nenhuma foto de cupom para visualizar.");
         return;
-        button.textContent = 'Visualizar Imagens';
     }
 
-    // Para cada imagem na variável fotosCupons, cria um elemento <div> para exibir o índice e o nome do cupom
-    fotosCupons.forEach((foto, index) => {
-        // Cria um contêiner para o índice e o nome do cupom
-        const container = document.createElement('div');
-        container.classList.add('cupom-container'); // Adiciona uma classe para estilização opcional
-
-        // Obtém o valor do cupom correspondente ao índice
-        const valorCupom = cupons[index].valor.toFixed(2);
-
-        // Cria um elemento <p> para exibir o nome do cupom com o valor
-        const cupomInfo = document.createElement('p');
-        cupomInfo.textContent = `Cupom - R$ ${valorCupom}`; // Define o texto do índice e nome do cupom
-        cupomInfo.className = 'cupom-info'; // Adiciona uma classe para estilização opcional
-        container.appendChild(cupomInfo); // Adiciona o índice e o nome do cupom ao contêiner
-
-        // Cria um botão para baixar e visualizar a imagem do cupom
-        const botaoDownload = document.createElement('button');
-        botaoDownload.textContent = 'Baixar/Visualizar'; // Texto do botão
-        botaoDownload.className = 'botao-download'; // Classe para estilização opcional
-        // Adiciona um evento de clique ao botão
-        botaoDownload.onclick = function() {
-            baixarVisualizarImagem(index);
-        };
-        container.appendChild(botaoDownload); // Adiciona o botão ao contêiner
-
-        // Cria um botão para remover a imagem do cupom
-        const botaoRemover = document.createElement('button');
-        botaoRemover.textContent = 'Remover'; // Texto do botão
-        botaoRemover.className = 'botao-remover'; // Classe para estilização opcional
-        // Adiciona um evento de clique ao botão
-        botaoRemover.onclick = function() {
-            removerImagemCupom(index);
-            button.textContent = 'Visualizar Imagens'; // Altera o texto do botão após a remoção
-        };
-        container.appendChild(botaoRemover);
-         // Adiciona o botão ao contêiner
-
-        // Adiciona o contêiner ao modal
-        modal.appendChild(container);
-    });
+    // Iterar sobre as fotos e os cupons separadamente
+    for (let i = 0; i < fotosCupons.length; i++) {
+        // Verifica se há um cupom correspondente para a foto atual
+        if (cupons[i]) {
+            // Cria um contêiner para exibir as informações do cupom e da foto
+            const container = document.createElement('div');
+            container.classList.add('cupom-container'); // Adiciona uma classe para estilização opcional
+        
+            // Obtém o valor do cupom correspondente ao índice
+            let valorCupom;
+            if (cupons[i].tipoCupom === 'combustivel') {
+                valorCupom = cupons[i].valorCombustivel.toFixed(2); // Usar o valor de combustível
+            } else {
+                valorCupom = cupons[i].valor.toFixed(2);
+            }
+        
+            // Cria um elemento <p> para exibir o nome do cupom com o valor
+            const cupomInfo = document.createElement('p');
+            cupomInfo.textContent = `Cupom - R$ ${valorCupom}`; // Define o texto do índice e nome do cupom
+            cupomInfo.className = 'cupom-info'; // Adiciona uma classe para estilização opcional
+            container.appendChild(cupomInfo); // Adiciona o índice e o nome do cupom ao contêiner
+        
+            // Cria um botão para baixar e visualizar a imagem do cupom
+            const botaoDownload = document.createElement('button');
+            botaoDownload.textContent = 'Baixar/Visualizar'; // Texto do botão
+            botaoDownload.className = 'botao-download'; // Classe para estilização opcional
+            // Adiciona um evento de clique ao botão
+            botaoDownload.onclick = function() {
+                baixarVisualizarImagem(i);
+            };
+            container.appendChild(botaoDownload); // Adiciona o botão ao contêiner
+        
+            // Cria um botão para remover a imagem do cupom
+            const botaoRemover = document.createElement('button');
+            botaoRemover.textContent = 'Remover'; // Texto do botão
+            botaoRemover.className = 'botao-remover'; // Classe para estilização opcional
+            // Adiciona um evento de clique ao botão
+            botaoRemover.onclick = function() {
+                removerImagemCupom(i);
+                button.textContent = 'Visualizar Imagens'; // Altera o texto do botão após a remoção
+            };
+            container.appendChild(botaoRemover);
+            // Adiciona o botão ao contêiner
+        
+            // Adiciona o contêiner ao modal
+            modal.appendChild(container);
+        } else {
+            // Se não houver um cupom correspondente, exibir uma mensagem de erro
+            alert(`Não há cupom correspondente para a foto ${i + 1}.`);
+            return;
+        }
+    }
 
     // Exibe o modal
     modal.style.display = 'block';
@@ -444,8 +454,6 @@ function visualizarImagensCupons() {
         }
     });
 }
-
-
 
 function baixarVisualizarImagem(index) {
     const fotoCupom = fotosCupons[index]; // Obtém a imagem correspondente ao índice
